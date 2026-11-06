@@ -13,7 +13,6 @@
   <description>16:9 YouTube playback and pinch zoom test for Galaxy Watch Active2.</description>
   <feature name="http://tizen.org/feature/screen.size.normal"/>
   <feature name="http://tizen.org/feature/input.touch"/>
-  <icon src="icon.png"/>
   <tizen:privilege name="http://tizen.org/privilege/internet"/>
   <access origin="https://www.youtube.com" subdomains="true"/>
   <access origin="https://www.youtube-nocookie.com" subdomains="true"/>
