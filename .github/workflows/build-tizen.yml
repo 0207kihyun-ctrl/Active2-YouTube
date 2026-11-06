@@ -1,0 +1,46 @@
+name: Build Active2 Tizen Web App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Validate Tizen Web app source
+        run: |
+          test -f config.xml
+          test -f index.html
+          test -f style.css
+          test -f app.js
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          root = ET.parse("config.xml").getroot()
+          ns = {"t": "http://www.w3.org/ns/widgets", "tz": "http://tizen.org/ns/widgets"}
+          assert root.find("t:content", ns).attrib["src"] == "index.html"
+          assert root.find("t:name", ns).text == "Active2 YouTube Test"
+          assert root.find("tz:profile", ns).attrib["name"] == "wearable"
+          assert root.find("tz:application", ns).attrib["required_version"] == "4.0"
+          print("Tizen wearable web source validation passed.")
+          PY
+
+      - name: Create source package for Tizen Studio
+        run: |
+          mkdir -p dist
+          zip -r dist/Active2-YouTube-Tizen-Source.zip config.xml index.html style.css app.js README.md
+
+      - name: Upload source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Active2-YouTube-Tizen-Source
+          path: dist/Active2-YouTube-Tizen-Source.zip
+          if-no-files-found: error
+          retention-days: 14
